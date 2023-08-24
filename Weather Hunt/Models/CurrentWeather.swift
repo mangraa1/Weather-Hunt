@@ -18,7 +18,7 @@ struct CurrentWeather {
 
     let feelsLikeTemperature: Double
     var feelsLikeTemperatureString: String {
-        return "\(feelsLikeTemperature)"
+        return "\(feelsLikeTemperature.rounded())"
     }
 
     let conditionCode: Int
