@@ -38,7 +38,7 @@ class ViewController: UIViewController {
             self.cityLabel.text = weather.cityName
             self.temperatureLabel.text = weather.temperatureString
             self.feelsLikeTemperatureLabel.text = weather.feelsLikeTemperatureString
-            self.weatherIconImageView.image = UIImage(named: weather.systemIconNameString)
+            self.weatherIconImageView.image = UIImage(systemName: weather.systemIconNameString)
         }
     }
 
