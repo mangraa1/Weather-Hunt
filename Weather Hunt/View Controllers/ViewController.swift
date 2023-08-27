@@ -6,12 +6,21 @@
 //
 
 import UIKit
+import CoreLocation
 
 class ViewController: UIViewController {
 
     //MARK: @IBOutlets & Variables
 
     private var networkWeatherManager = NetworkWeatherManager()
+
+    private lazy var locationManager: CLLocationManager = {
+        let lm = CLLocationManager()
+        lm.delegate = self
+        lm.desiredAccuracy = kCLLocationAccuracyKilometer
+        lm.requestWhenInUseAuthorization()
+        return lm
+    }()
 
     @IBOutlet weak var weatherIconImageView: UIImageView!
     @IBOutlet weak var cityLabel: UILabel!
@@ -28,7 +37,13 @@ class ViewController: UIViewController {
             self.updateInterfaceWith(weather: currentWeather)
         }
 
-        networkWeatherManager.fetchCurrentWeather(forCity: "Kyiv")
+        DispatchQueue.global().async {
+            if CLLocationManager.locationServicesEnabled() {
+                DispatchQueue.main.async {
+                    self.locationManager.requestLocation()
+                }
+            }
+        }
     }
 
     //MARK: - Update Interface
@@ -46,7 +61,22 @@ class ViewController: UIViewController {
 
     @IBAction func searchPressed(_ sender: UIButton) {
         self.presentSearchAlertController(withTitle: "Enter city name", message: nil, style: .alert) { [unowned self] city in
-            self.networkWeatherManager.fetchCurrentWeather(forCity: city)
+            self.networkWeatherManager.fetchCurrentWeather(forRequestType: .cityName(city: city))
         }
+    }
+}
+
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+
+        let latitude = location.coordinate.latitude
+        let longitude = location.coordinate.longitude
+
+        networkWeatherManager.fetchCurrentWeather(forRequestType: .coordinate(latitude: latitude, longitude: longitude))
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
     }
 }
