@@ -12,7 +12,7 @@
 git clone https://github.com/mangraa1/Weather-Hunt
 ```
 
-2. Open Schedule InstagramClone.xcworkspace in Xcode
+2. Open Schedule Weather-Hunt.xcworkspace in Xcode
 
 3. Select some iOS/iPadOS device and hit run button in Xcode
 
